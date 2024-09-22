@@ -25,19 +25,20 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 }
 
 const registerUser = asyncHandler( async (req, res) => {
-    // get user details from frontend
-    // validation - not empty
-    // check if user already exists: username, email
-    // check for images, check for avatar
-    // upload them to cloudinary, avatar
-    // create user object - create entry in db
-    // remove password and refresh token field from response
-    // check for user creation
-    // return res
+    /* 
+    1.get user details from frontend
+    2.validation - not empty
+    3.check if user already exists: username, email
+    4.check for images, check for avatar
+    5.upload them to cloudinary, avatar
+    6.create user object - create entry in db
+    7.remove password and refresh token field from response
+    8.check for user creation
+    9.return res 
+    */
 
 
     const {fullName, email, username, password } = req.body
-    //console.log("email: ", email);
 
     if (
         [fullName, email, username, password].some((field) => field?.trim() === "")
@@ -52,7 +53,8 @@ const registerUser = asyncHandler( async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, "User with email or username already exists")
     }
-    //console.log(req.files);
+
+    console.log("req.files:",req.files);
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
     //const coverImageLocalPath = req.files?.coverImage[0]?.path;
@@ -99,12 +101,14 @@ const registerUser = asyncHandler( async (req, res) => {
 } )
 
 const loginUser = asyncHandler(async (req, res) =>{
-    // req body -> data
-    // username or email
-    //find the user
-    //password check
-    //access and referesh token
-    //send cookie
+    /* 
+    1.req body -> data
+    2.username or email
+    3.find the user
+    4.password check
+    5.access and referesh token
+    6.send cookie 
+    */
 
     const {email, username, password} = req.body
     console.log(email);
@@ -113,11 +117,14 @@ const loginUser = asyncHandler(async (req, res) =>{
         throw new ApiError(400, "username or email is required")
     }
     
-    // Here is an alternative of above code based on logic discussed in video:
-    // if (!(username || email)) {
-    //     throw new ApiError(400, "username or email is required")
-        
-    // }
+    /*
+    # Here is an alternative of above code based on logic discussed in video:-
+    # Dmorgan's Law : break the bar change the sign:-
+
+    if (!(username || email)) {
+        throw new ApiError(400, "username or email is required") 
+    } 
+    */
 
     const user = await User.findOne({
         $or: [{username}, {email}]
@@ -233,8 +240,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const changeCurrentPassword = asyncHandler(async(req, res) => {
     const {oldPassword, newPassword} = req.body
-
-    
 
     const user = await User.findById(req.user?._id)
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
